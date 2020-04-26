@@ -1,0 +1,8 @@
+; ----- rx8 packet structure ----
+; byte 1: header = A0
+; byte 2 and 3 : LSB and MSB of x output data
+; byte 4 and 5: LSB and MSB of y output data
+; byte 6 and 7: LSb and MSN of z utput data
+;byte 8: tail= C0
+
+rx8 [h=A0] @0X @1X @0Y @1Y @0Z @1Z [t=C0]
