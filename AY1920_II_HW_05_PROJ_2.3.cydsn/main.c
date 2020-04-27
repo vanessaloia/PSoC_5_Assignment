@@ -1,13 +1,13 @@
 /**
-* Project 2.2
+* Project 2.3
 * In this project the registers of the acceleremeter are set to provide a 3 axis signal
-* in normal mode with a sampling frequency of 100 Hz and a full scale range from -2g to +2g.
+* in hish resolution mode with a sampling frequency of 100 Hz and a full scale range from -4g to +4g. 
 * Every 10 ms the accelerometer's status register is read to verify if new data are available.
 * If so, the accelerometer's output registers are read and data are sent through UART communication
-* with 9600 bps of velocity. 
+* 
 *
 * Author: Vanessa Aloia
-* Date: 26/04/2020
+* Date: 27/04/2020
 */
 
 
@@ -78,9 +78,9 @@ int main(void)
          UART_Debug_PutString(message); 
     }
     
-    /* Set the control register 1 in order to operate in normal mode at 100 Hz */
-    if (ctrl_reg != CTRL_REG_1_NM) {
-        ctrl_reg = CTRL_REG_1_NM;
+    /* Set the control register 1 in order to operate in high resolution mode at 100 Hz */
+    if (ctrl_reg != CTRL_REG_1_HR) {
+        ctrl_reg = CTRL_REG_1_HR;
         
         error = I2C_Peripheral_WriteRegister(LIS3DH_DEVICE_ADDRESS,CTRL_REG_1,ctrl_reg);
         
@@ -107,10 +107,10 @@ int main(void)
          UART_Debug_PutString(message); 
     }
     
-    /* set the control register 4 to operate in normal mode */
+    /* set the control register 4 to operate in high resolution mode and set up FSR= 8g */
     
-    if (ctrl_reg != CTRL_REG_4_NM) {
-        ctrl_reg = CTRL_REG_4_NM;
+    if (ctrl_reg != CTRL_REG_4_HR) {
+        ctrl_reg = CTRL_REG_4_HR;
         
         error = I2C_Peripheral_WriteRegister(LIS3DH_DEVICE_ADDRESS,CTRL_REG_4,ctrl_reg);
         
@@ -121,16 +121,16 @@ int main(void)
             UART_Debug_PutString(message);
         }
         else {
-            sprintf(message, " CTRL_REG_4 set up at : 0x%02x\r\n", ctrl_reg);
+            sprintf(message, "CTRL_REG_4 set up at : 0x%02x\r\n", ctrl_reg);
             
             UART_Debug_PutString(message);
         }
     }    
     
     /* after setting up the register, initialize timer and interrupt */
-    Timer_Start();
+    //Timer_Start();
     
-    ISR_ReadData_StartEx(Custom_ISR);
+    //ISR_ReadData_StartEx(Custom_ISR);
     
     
     /* set header and tail for UART communication */
