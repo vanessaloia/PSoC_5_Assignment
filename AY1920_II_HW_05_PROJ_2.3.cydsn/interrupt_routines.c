@@ -1,8 +1,16 @@
 
 #include "interrupt_routines.h"
+
+/* full scale range going from -4g to 4g */
+#define FSR 8.0
+/* 12 bits resolution */
+#define RES 4096
+/* 1g= 9.81 m/s^2 */
+#define g 9.81
+
     
     /* array to save accelerometer's registers output */
-    uint8_t accelerometer_data[NUM_BYTES*AXES];
+    uint8_t accelerometer_data[2*AXES];
     
     /* function to scale the x,y,z output values and save them in the array to send through UART */
     void SaveAccelerometerData (void);
@@ -26,7 +34,7 @@ CY_ISR(Custom_ISR) {
         if (status_reg_value & STATUS_REG_NEW_DATA) {
             
             /* multi-read of the x,y,z 2 bytes outputs in the corresponding registers */
-            error= I2C_Peripheral_ReadRegisterMulti(LIS3DH_DEVICE_ADDRESS, OUT_X_L, NUM_BYTES*AXES, accelerometer_data);
+            error= I2C_Peripheral_ReadRegisterMulti(LIS3DH_DEVICE_ADDRESS, OUT_X_L, 2*AXES, accelerometer_data);
             
             if (error == NO_ERROR){
                 
@@ -47,22 +55,34 @@ CY_ISR(Custom_ISR) {
  void SaveAccelerometerData() {
     
     uint8_t i;
-    int16 scaled_value;
-    
+    int16 read_value;
+    float converted_value;
+    int32 casted_value;
+   
     /* for x, y, z */
     for (i=0; i< AXES; i++) {
     /* output registers are left adjusted: put in a 16 bit variable the two 
-    registers related with the axis and then shift to the right of 6 bits */
+    registers related with the axis and then shift to the right of 4 bits (12 bits resolution) */
         
-    scaled_value= (int16) ((accelerometer_data[NUM_BYTES*i]| (accelerometer_data[NUM_BYTES*i+ 1]<<8))) >>6;
+    read_value= (int16) ((accelerometer_data[2*i]| (accelerometer_data[2*i+ 1]<<8))) >>4;
     
-    /* scale the value (4mg/digit) */
-    scaled_value = scaled_value*4;
     
-    /* save the the two bytes in the array which will be sent though UART */
-    packet_to_send[NUM_BYTES*i +1] = (uint8_t)(scaled_value& 0xFF);
+    /*value converted in m/s^2  */
+    converted_value = read_value* FSR/RES * g;
     
-    packet_to_send [NUM_BYTES*i+2] = (uint8_t)(scaled_value>>8);
+    
+    /* cast the float into a intger of 32 bits taking 4 decimals */
+    casted_value= (int32) (converted_value * 10000);
+    
+    
+    /* save the the 4 bytes in the array which will be sent though UART */
+    packet_to_send[NUM_BYTES*i +1] = (uint8_t)(casted_value & 0xFF);
+    
+    packet_to_send [NUM_BYTES*i+2] = (uint8_t)(casted_value>>8 & 0xFF);
+    
+    packet_to_send [NUM_BYTES*i+3] = (uint8_t)(casted_value >> 16 & 0xFF);
+    
+    packet_to_send [NUM_BYTES*i+4] = (uint8_t)(casted_value >> 24);
     }
  }
    

@@ -4,7 +4,7 @@
 * in hish resolution mode with a sampling frequency of 100 Hz and a full scale range from -4g to +4g. 
 * Every 10 ms the accelerometer's status register is read to verify if new data are available.
 * If so, the accelerometer's output registers are read and data are sent through UART communication
-* 
+* with a baud rate of 19200 bps.
 *
 * Author: Vanessa Aloia
 * Date: 27/04/2020
@@ -128,9 +128,9 @@ int main(void)
     }    
     
     /* after setting up the register, initialize timer and interrupt */
-    //Timer_Start();
+    Timer_Start();
     
-    //ISR_ReadData_StartEx(Custom_ISR);
+    ISR_ReadData_StartEx(Custom_ISR);
     
     
     /* set header and tail for UART communication */

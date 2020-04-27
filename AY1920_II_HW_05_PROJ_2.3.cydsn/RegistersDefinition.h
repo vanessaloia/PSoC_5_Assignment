@@ -33,11 +33,6 @@
 
     #define OUT_Z_H 0x2D
      
-
-    /* values of control register 1 and 4 to set the normal mode (NM) and 100 Hz rate */
-
-    #define CTRL_REG_1_NM 0x57
-    #define CTRL_REG_4_NM 0x0
     
     /* values of control register 1 and 4 to set the high resolution mode (HR),100 Hz rate  and FSR= 8g*/
     #define CTRL_REG_1_HR 0x57
