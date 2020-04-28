@@ -1,15 +1,14 @@
-
 #include "interrupt_routines.h"
 #include "stdio.h"
 
 /* 10 bits resolution: output can go from -512 to 511 */
 #define MAX_ACC_OUT 511
 
-/* sensitivity of the conversione from digit to mg [mg/digit] */
+/* sensitivity of the conversion from digit to mg provided by the datasheet: 4 mg/digit */
 #define SENSITIVITY 4
     
-/* array to save accelerometer's registers output */
-uint8_t accelerometer_data[NUM_BYTES*AXES];
+/* array to save accelerometer's registers output (2 8-bit registers for each axis) */
+uint8_t accelerometer_data[2*AXES];
 
 /* function to scale the x,y,z output values and save them in the array to send through UART */
 void SaveAccelerometerData (void);
@@ -20,7 +19,7 @@ CY_ISR(Custom_ISR) {
     ErrorCode error;
     uint8_t status_reg_value;
     
-    /* clear the status register of the timer */
+    /* clear the timer's status register  */
     Timer_ReadStatusRegister();
     
     /*read the accelerometer's status register */
@@ -29,28 +28,26 @@ CY_ISR(Custom_ISR) {
     /* if no error occurs while reading */
     if (error == NO_ERROR)  {
         
-        /* new data are available on at least one of the x,y,z registers */
+        /* new data are available on the x,y,z registers */
         if (status_reg_value & STATUS_REG_NEW_DATA) {
             
             /* multi-read of the x,y,z 2 bytes outputs in the corresponding registers */
-            error= I2C_Peripheral_ReadRegisterMulti(LIS3DH_DEVICE_ADDRESS, OUT_X_L, NUM_BYTES*AXES, accelerometer_data);
+            error= I2C_Peripheral_ReadRegisterMulti(LIS3DH_DEVICE_ADDRESS, OUT_X_L, 2*AXES, accelerometer_data);
             
             if (error == NO_ERROR){
                 
-                /* scale the values and save it in the array sent through UART */
+                /* scale the values and save it in the array to send through UART */
                 SaveAccelerometerData();
                 
                 /* flag to inform that new data are available */
                 new_data=1;
             }
         }
-                   
-        /* no new data are available in any register*/
-            else 
-                new_data=0;
-        }
+    }
 }
 
+/* for each x, y,z output registers, 10 bits outputs are saved, converted in mg/digit and saved 
+in two bytes of an array for the transmission */
  void SaveAccelerometerData() {
     
     uint8_t i;
@@ -59,10 +56,10 @@ CY_ISR(Custom_ISR) {
     /* for x, y, z */
     for (i=0; i< AXES; i++) {
         
-    /* output registers are left adjusted: put in a 16 bit variable the two 
-    registers related with the axis and then shift to the right of 6 bits */
+    /* output registers are left-adjusted: put the data contained in low and high registers 
+    in a 16 bits variable and then shift to the right of 6 bits to have 10 bits output data */
         
-    scaled_value= (int16) ((accelerometer_data[NUM_BYTES*i]| (accelerometer_data[NUM_BYTES*i+ 1]<<8))) >>6;
+    scaled_value= (int16) ((accelerometer_data[2*i]| (accelerometer_data[2*i+ 1]<<8))) >>6;
     
     /* since 10 bits resolution,constraints added: output from -512 to 511 */
     if (scaled_value > MAX_ACC_OUT) 
@@ -73,7 +70,7 @@ CY_ISR(Custom_ISR) {
     
         scaled_value = -MAX_ACC_OUT -1; 
     
-    /* conversion of the value in mg, scaling with a sensitivity of 4mg/git (provided by the datasheet */
+    /* conversion of the value in mg, scaling with a sensitivity of 4mg/git */
     scaled_value = scaled_value*SENSITIVITY;
     
     /* save the the two bytes in the array which will be sent though UART */

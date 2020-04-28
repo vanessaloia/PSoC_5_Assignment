@@ -1,6 +1,6 @@
 /* 
 * In this header file all the definitions of device and register's addresses
-* and values to set are available
+* and registers' values to set are available
 *
 * Author: Vanessa Aloia
 * Date: 26/04/2020

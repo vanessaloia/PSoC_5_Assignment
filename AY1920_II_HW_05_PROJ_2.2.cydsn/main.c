@@ -1,6 +1,6 @@
 /**
 * Project 2.2
-* In this project the registers of the acceleremeter are set to provide a 3 axis signal
+* In this project the accelerometer's registers are set to provide a 3 axes signal
 * in normal mode with a sampling frequency of 100 Hz and a full scale range from -2g to +2g.
 * Every 10 ms the accelerometer's status register is read to verify if new data are available.
 * If so, the accelerometer's output registers are read and data are sent through UART communication
@@ -32,7 +32,7 @@ int main(void)
     /* flag's default value is set at 0 */
     new_data=0;
 
-    /* Place your initialization/startup of the I2C and UART */
+    /*initialization/startup of the I2C and UART */
     I2C_Peripheral_Start();
     UART_Debug_Start();
     
@@ -143,7 +143,7 @@ int main(void)
         /* if new data are available */
         if (new_data) {
             
-            /* sennd the data through UART */
+            /* send data through UART */
             UART_Debug_PutArray(packet_to_send, AXES*NUM_BYTES +2);
             
             /* re-set the flag at 0 */
