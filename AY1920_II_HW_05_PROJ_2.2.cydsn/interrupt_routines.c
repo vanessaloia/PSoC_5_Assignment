@@ -73,7 +73,7 @@ in two bytes of an array for the transmission */
     scaled_value = scaled_value*SENSITIVITY;
     
     /* save the the two bytes in the array which will be sent though UART */
-    packet_to_send[NUM_BYTES*i +1] = (uint8_t)(scaled_value& 0xFF);
+    packet_to_send[NUM_BYTES*i +1] = (uint8_t)(scaled_value & 0xFF);
     
     packet_to_send [NUM_BYTES*i+2] = (uint8_t)(scaled_value>>8);
     }

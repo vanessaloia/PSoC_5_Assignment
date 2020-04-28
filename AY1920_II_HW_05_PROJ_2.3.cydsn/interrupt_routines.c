@@ -89,9 +89,9 @@ the value is saved in 4 bytes on the array to be trasmitted to UART */
     /* save the the 4 bytes in the array which will be sent though UART */
     packet_to_send[NUM_BYTES*i +1] = (uint8_t)(casted_value & 0xFF); 
     
-    packet_to_send [NUM_BYTES*i+2] = (uint8_t)(casted_value>>8 & 0xFF);
+    packet_to_send [NUM_BYTES*i+2] = (uint8_t)((casted_value>>8) & 0xFF);
     
-    packet_to_send [NUM_BYTES*i+3] = (uint8_t)(casted_value >> 16 & 0xFF);
+    packet_to_send [NUM_BYTES*i+3] = (uint8_t)((casted_value >> 16) & 0xFF);
     
     packet_to_send [NUM_BYTES*i+4] = (uint8_t)(casted_value >> 24);
     }
