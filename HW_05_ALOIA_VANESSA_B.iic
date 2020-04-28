@@ -4,4 +4,5 @@
 ; byte 6, 7, 8, 9: 4 bytes of y output data
 ; byte 10, 11, 12, 13: 4 bytes of z output data
 ; byte 14: tail= C0
+; set the baud rate in Protocol configuration at 19200 bps
 rx8 [h=A0] @0X @1X @2X @3X @0Y @1Y @2Y @3Y @0Z @1Z @2Z @3Z [t=C0]

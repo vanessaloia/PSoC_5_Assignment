@@ -2,7 +2,7 @@
 ; byte 1: header = A0
 ; byte 2 and 3 : LSB and MSB of x output data
 ; byte 4 and 5: LSB and MSB of y output data
-; byte 6 and 7: LSb and MSN of z utput data
+; byte 6 and 7: LSB and MSB of z output data
 ;byte 8: tail= C0
-
+; set the baud rate in Protocol configuration at 9600 bps
 rx8 [h=A0] @0X @1X @0Y @1Y @0Z @1Z [t=C0]
