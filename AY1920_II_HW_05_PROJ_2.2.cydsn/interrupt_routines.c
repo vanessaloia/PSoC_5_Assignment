@@ -1,5 +1,4 @@
 #include "interrupt_routines.h"
-#include "stdio.h"
 
 /* 10 bits resolution: output can go from -512 to 511 */
 #define MAX_ACC_OUT 511

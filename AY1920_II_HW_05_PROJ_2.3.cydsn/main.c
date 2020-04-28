@@ -1,7 +1,7 @@
 /**
 * Project 2.3
-* In this project the registers of the acceleremeter are set to provide a 3 axis signal
-* in hish resolution mode with a sampling frequency of 100 Hz and a full scale range from -4g to +4g. 
+* In this project the registers of the acceleremeter are set to provide a 3 axes signal
+* in high resolution mode with a sampling frequency of 100 Hz and a full scale range from -4g to +4g. 
 * Every 10 ms the accelerometer's status register is read to verify if new data are available.
 * If so, the accelerometer's output registers are read and data are sent through UART communication
 * with a baud rate of 19200 bps.
@@ -56,8 +56,8 @@ int main(void)
     }
     
     
-    /* SET THE REGISTERS TO READ THE ACCELEROMETER'S OUTPUT AT 100 HZ WITH 10-bit RESOLUTION
-     (NORMALE MODE)
+    /* SET THE REGISTERS TO READ THE ACCELEROMETER'S OUTPUT AT 100 HZ WITH 12-bit RESOLUTION
+     (HIGH RESOLUTION MODE)
     */
     
     uint8_t ctrl_reg;
